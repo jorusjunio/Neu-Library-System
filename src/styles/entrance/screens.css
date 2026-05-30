@@ -1,0 +1,50 @@
+.entrance-page {
+  height: 100vh;
+  font-family: var(--font-body);
+}
+
+.main-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 40px 40px;
+}
+
+.screen {
+  display: flex;
+  width: 100%;
+  max-width: 680px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: screenEnter 0.65s var(--spring) both;
+}
+
+@keyframes screenEnter {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.footer {
+  position: fixed;
+  right: 32px;
+  bottom: 18px;
+  left: 32px;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.1);
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.4px;
+}

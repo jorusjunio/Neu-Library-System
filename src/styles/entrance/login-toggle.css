@@ -1,0 +1,57 @@
+.login-toggle {
+  position: relative;
+  display: flex;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(24px);
+  animation: fadeIn 0.8s 0.15s var(--ease-out) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.login-toggle::before {
+  position: absolute;
+  z-index: 0;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  content: "";
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: transform 0.35s var(--spring);
+}
+
+.login-toggle.email-active::before {
+  transform: translateX(100%);
+}
+
+.toggle-btn {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 10px 24px;
+  border: 0;
+  border-radius: 100px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+}
+
+.toggle-btn.active {
+  color: var(--text-primary);
+}

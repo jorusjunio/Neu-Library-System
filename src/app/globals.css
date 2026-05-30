@@ -1,0 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;500;600;700;800&display=swap");
+@import "tailwindcss";
+@import "../styles/shared/base.css";
+@import "../styles/shared/background.css";
+@import "../styles/entrance/header.css";
+@import "../styles/entrance/screens.css";
+@import "../styles/entrance/idle.css";
+@import "../styles/entrance/login-toggle.css";
+@import "../styles/entrance/scanning.css";
+@import "../styles/entrance/welcome.css";
+@import "../styles/entrance/status.css";
+@import "../styles/admin/base.css";
+@import "../styles/admin/sidebar.css";
+@import "../styles/admin/dashboard.css";
+@import "../styles/admin/tables.css";

@@ -1,0 +1,287 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-wrap {
+  display: flex;
+  max-width: 420px;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+}
+
+.search-wrap:focus-within {
+  border-color: rgba(74, 158, 255, 0.35);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.08);
+}
+
+.search-icon {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  opacity: 0.5;
+}
+
+.search-input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.search-input::placeholder {
+  color: var(--text-3);
+}
+
+.record-count {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.filter-toggle {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--glass-deep);
+}
+
+.filter-pill {
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.filter-pill.active {
+  background: var(--blue-g);
+  color: var(--blue);
+}
+
+.crud-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--glass-deep);
+  backdrop-filter: blur(16px);
+  flex-wrap: wrap;
+}
+
+.crud-panel input,
+.crud-panel select {
+  min-height: 34px;
+  min-width: 130px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-2);
+  font-size: 11px;
+}
+
+.crud-panel input:focus,
+.crud-panel select:focus {
+  border-color: rgba(74, 158, 255, 0.35);
+}
+
+.check-control {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inline-action {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--glass);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.inline-action.primary {
+  border-color: rgba(74, 158, 255, 0.24);
+  background: var(--blue-g);
+  color: var(--blue);
+}
+
+.table-wrap {
+  position: relative;
+  overflow: hidden;
+  max-height: calc(100vh - 230px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--glass-deep);
+  backdrop-filter: blur(20px);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: calc(100vh - 270px);
+}
+
+.data-table thead tr,
+.data-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.data-table th {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgb(10, 16, 34);
+  color: var(--text-3);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+  color: var(--text-2);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-table .numeric-column {
+  text-align: center;
+}
+
+.data-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge-student {
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  background: var(--blue-g);
+  color: var(--blue);
+}
+
+.badge-faculty {
+  border: 1px solid rgba(240, 192, 64, 0.2);
+  background: var(--gold-g);
+  color: var(--gold);
+}
+
+.badge-employee,
+.badge-active {
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  background: var(--green-g);
+  color: var(--green);
+}
+
+.badge-blocked {
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  background: var(--red-g);
+  color: var(--red);
+}
+
+.row-actions {
+  white-space: nowrap;
+}
+
+.row-actions button {
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  margin-right: 6px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-2);
+}
+
+.row-actions .row-action-warn,
+.row-actions .row-action-restore {
+  width: auto;
+  min-width: 66px;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.row-actions .row-action-warn {
+  border-color: rgba(248, 113, 113, 0.2);
+  background: var(--red-g);
+  color: var(--red);
+}
+
+.row-actions .row-action-restore {
+  border-color: rgba(74, 222, 128, 0.2);
+  background: var(--green-g);
+  color: var(--green);
+}
+
+.row-actions button:hover {
+  border-color: var(--border-hov);
+  color: var(--text);
+}
