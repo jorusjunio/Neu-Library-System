@@ -62,7 +62,7 @@
 
 .stat-filter-label {
   padding-right: 4px;
-  color: rgba(255, 255, 255, 0.22);
+  color: var(--text-3);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -242,8 +242,8 @@
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 18px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .stat-card:nth-child(1) {
@@ -277,14 +277,14 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   overflow: hidden;
-  padding: 18px 20px;
+  padding: 19px 20px;
   border: 1px solid var(--border);
   border-radius: 18px;
   background: var(--glass);
   backdrop-filter: blur(24px);
-  transition: all 0.28s var(--spring);
+  transition: border-color 0.25s var(--ease), background 0.25s var(--ease), box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
 }
 
 .stat-card::after {
@@ -294,45 +294,50 @@
   left: 0;
   height: 1px;
   content: "";
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
 }
 
 .stat-card:hover {
   border-color: var(--border-hov);
   background: var(--glass-hov);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.24);
+  transform: translateY(-2px);
 }
 
 .stat-icon-wrap {
   display: flex;
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: 13px;
   color: var(--text);
+  transition: transform 0.25s var(--spring);
+}
+
+.stat-card:hover .stat-icon-wrap {
+  transform: scale(1.05);
 }
 
 .stat-icon-wrap.blue {
   background: var(--blue-g);
-  box-shadow: 0 4px 16px rgba(74, 158, 255, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 14px rgba(74, 158, 255, 0.1);
 }
 
 .stat-icon-wrap.gold {
   background: var(--gold-g);
-  box-shadow: 0 4px 16px rgba(240, 192, 64, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 14px rgba(240, 192, 64, 0.1);
 }
 
 .stat-icon-wrap.green {
   background: var(--green-g);
-  box-shadow: 0 4px 16px rgba(74, 222, 128, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 14px rgba(74, 222, 128, 0.1);
 }
 
 .stat-icon-wrap.purple {
   background: var(--purple-g);
-  box-shadow: 0 4px 16px rgba(167, 139, 250, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 14px rgba(167, 139, 250, 0.1);
 }
 
 .stat-info {
@@ -340,21 +345,25 @@
 }
 
 .stat-value {
+  display: -webkit-box;
   overflow: hidden;
   color: var(--text);
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.8px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: clamp(14px, 1.4vw, 21px);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: break-word;
 }
 
 .stat-label {
-  margin-top: 3px;
+  margin-top: 4px;
   color: var(--text-3);
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
 }
 
@@ -363,19 +372,19 @@
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: var(--space-4);
 }
 
 .chart-card {
   position: relative;
   overflow: hidden;
   min-height: 260px;
-  padding: 18px 20px;
+  padding: 20px 22px;
   border: 1px solid var(--border);
   border-radius: 18px;
   background: var(--glass);
   backdrop-filter: blur(24px);
-  transition: border-color 0.2s;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
 
 .chart-card::after {
@@ -390,6 +399,7 @@
 
 .chart-card:hover {
   border-color: var(--border-hov);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
 }
 
 .chart-card.span-2 {
@@ -408,14 +418,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .chart-title {
-  color: var(--text-3);
+  color: var(--text-2);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.8px;
+  font-weight: 700;
+  letter-spacing: 0.9px;
   text-transform: uppercase;
 }
 
@@ -426,21 +438,9 @@
   align-items: end;
   gap: 10px;
   padding: 28px 2px 26px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  background:
-    linear-gradient(to top, rgba(255, 255, 255, 0.07) 1px, transparent 1px) 0 28px / 100% 52px,
-    linear-gradient(to top, rgba(74, 158, 255, 0.12), transparent 44%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 28px / 100% 52px;
   isolation: isolate;
-}
-
-.real-chart.bars::before {
-  position: absolute;
-  right: 0;
-  bottom: 26px;
-  left: 0;
-  height: 1px;
-  content: "";
-  background: rgba(74, 158, 255, 0.22);
 }
 
 .real-chart.bars span {
@@ -452,21 +452,17 @@
   max-width: 46px;
   align-items: flex-start;
   justify-content: center;
-  border: 1px solid rgba(96, 180, 255, 0.34);
-  border-bottom-color: rgba(96, 180, 255, 0.5);
-  border-radius: 7px 7px 2px 2px;
-  background:
-    linear-gradient(180deg, rgba(96, 180, 255, 0.92), rgba(50, 115, 190, 0.66) 48%, rgba(36, 74, 124, 0.28)),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent 34%, rgba(255, 255, 255, 0.1));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 20px rgba(0, 0, 0, 0.14);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, rgba(74, 158, 255, 0.55), rgba(74, 158, 255, 0.14));
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s var(--ease);
 }
 
 .real-chart.bars span:hover {
-  border-color: rgba(160, 210, 255, 0.7);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 12px 24px rgba(74, 158, 255, 0.14);
-  filter: brightness(1.08);
-  transform: translateY(-3px);
+  border-color: rgba(74, 158, 255, 0.5);
+  background: linear-gradient(180deg, rgba(74, 158, 255, 0.72), rgba(74, 158, 255, 0.22));
+  transform: translateY(-2px);
 }
 
 .real-chart.bars.compact {
@@ -478,20 +474,21 @@
 
 .real-chart.bars strong {
   position: absolute;
-  top: -25px;
+  top: -24px;
   display: grid;
-  min-width: 24px;
-  height: 20px;
+  min-width: 22px;
+  height: 18px;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  background: rgba(10, 16, 34, 0.76);
-  color: var(--text);
+  color: var(--text-2);
   font-family: var(--font-mono);
   font-size: 10px;
-  font-weight: 800;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(10px);
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+.real-chart.bars span:hover strong {
+  opacity: 1;
 }
 
 .real-chart.bars small {
@@ -523,7 +520,7 @@
 }
 
 .line-chart-grid {
-  stroke: rgba(255, 255, 255, 0.07);
+  stroke: rgba(255, 255, 255, 0.06);
   stroke-width: 1;
 }
 
@@ -536,18 +533,37 @@
   stroke: #4a9eff;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 4;
-  filter: drop-shadow(0 0 12px rgba(74, 158, 255, 0.4));
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 6px rgba(74, 158, 255, 0.28));
   stroke-dasharray: 2200;
   stroke-dashoffset: 2200;
   animation: lineDraw 0.9s var(--ease) forwards;
 }
 
-.line-chart-point circle {
-  fill: rgb(10, 16, 34);
+.line-chart-point {
+  cursor: default;
+}
+
+.line-chart-point-halo {
+  fill: rgba(74, 158, 255, 0.12);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.line-chart-point-dot {
+  fill: rgb(9, 15, 30);
+  stroke: #4a9eff;
+  stroke-width: 2.5;
+  transition: r 0.18s ease, stroke 0.18s ease;
+}
+
+.line-chart-point:hover .line-chart-point-halo {
+  opacity: 1;
+}
+
+.line-chart-point:hover .line-chart-point-dot {
+  r: 5;
   stroke: #4ade80;
-  stroke-width: 3;
-  filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.4));
 }
 
 .line-chart-point text {
@@ -556,6 +572,12 @@
   font-size: 11px;
   font-weight: 800;
   text-anchor: middle;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.line-chart-point:hover text {
+  opacity: 1;
 }
 
 .line-chart-label {
@@ -573,30 +595,35 @@
 
 .donut-chart-wrap {
   display: grid;
-  gap: 16px;
+  gap: 18px;
   justify-items: center;
 }
 
 .donut-chart {
   position: relative;
   display: flex;
-  width: 132px;
-  height: 132px;
+  width: 130px;
+  height: 130px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   border-radius: 50%;
-  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.3s var(--spring);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.donut-chart-wrap:hover .donut-chart {
+  transform: scale(1.02);
 }
 
 .donut-chart::after {
   position: absolute;
-  inset: 24px;
+  inset: 26px;
   content: "";
   border-radius: 50%;
-  background: rgba(7, 12, 26, 0.92);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: rgb(8, 13, 27);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 .donut-chart span,
@@ -608,39 +635,48 @@
 .donut-chart span {
   color: var(--text);
   font-family: var(--font-mono);
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
 .donut-chart small {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.7px;
   text-transform: uppercase;
 }
 
 .donut-legend {
   display: grid;
   width: 100%;
-  gap: 8px;
+  gap: 3px;
 }
 
 .donut-legend-row {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
+  padding: 6px 4px;
+  border-radius: 8px;
   color: var(--text-2);
   font-size: 11px;
+  font-weight: 500;
+  transition: background 0.16s ease;
+}
+
+.donut-legend-row:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .donut-dot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  box-shadow: 0 0 12px currentColor;
+  box-shadow: 0 0 8px -1px currentColor;
 }
 
 .donut-legend-row p {
@@ -653,6 +689,8 @@
   color: var(--text);
   font-family: var(--font-mono);
   font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-list {
@@ -671,38 +709,61 @@
   padding: 10px 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.035);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text-2);
   transition: border-color 0.18s ease, background 0.18s ease;
 }
 
 .metric-row:hover {
-  border-color: rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.055);
 }
 
 .metric-row > div {
+  position: relative;
   flex: 1;
   min-width: 0;
+  padding-bottom: 11px;
 }
 
 .metric-row span {
   display: block;
   overflow: hidden;
+  font-size: 12px;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.metric-row i {
-  display: block;
-  height: 5px;
-  margin-top: 7px;
+.metric-row > div::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  content: "";
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(74, 158, 255, 0.9), rgba(74, 222, 128, 0.5));
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.metric-row i {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), rgba(74, 222, 128, 0.75));
+  transition: width 0.5s var(--ease);
 }
 
 .metric-row strong {
-  color: var(--blue);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .admin-notice,

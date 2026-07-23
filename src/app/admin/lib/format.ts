@@ -95,7 +95,7 @@ export function maxCount(rows: CountRow[]) {
   return Math.max(1, ...rows.map((row) => row.count));
 }
 
-export function pieBackground(rows: CountRow[]) {
+export function pieBackground(rows: CountRow[], gapDeg = 3) {
   const total = rows.reduce((sum, row) => sum + row.count, 0);
 
   if (!total) {
@@ -103,12 +103,20 @@ export function pieBackground(rows: CountRow[]) {
   }
 
   let cursor = 0;
-  const slices = rows.map((row, index) => {
-    const start = cursor;
-    const size = (row.count / total) * 100;
+  const stops: string[] = [];
+
+  rows.forEach((row, index) => {
+    const size = (row.count / total) * 360;
+    const half = size > gapDeg ? gapDeg / 2 : 0;
+    const start = cursor + half;
+    const end = cursor + size - half;
+
+    stops.push(`transparent ${cursor}deg ${start}deg`);
+    stops.push(`${chartColors[index % chartColors.length]} ${start}deg ${end}deg`);
     cursor += size;
-    return `${chartColors[index % chartColors.length]} ${start}% ${cursor}%`;
   });
 
-  return `conic-gradient(${slices.join(", ")})`;
+  stops.push(`transparent ${cursor}deg 360deg`);
+
+  return `conic-gradient(${stops.join(", ")})`;
 }

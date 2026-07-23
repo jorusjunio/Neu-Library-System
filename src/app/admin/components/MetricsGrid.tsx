@@ -16,7 +16,7 @@ export function MetricsGrid({ stats }: { stats: StatCard[] }) {
             <stat.icon size={21} strokeWidth={2.2} />
           </div>
           <div className="stat-info">
-            <div className="stat-value">{stat.value}</div>
+            <div className="stat-value" title={String(stat.value)}>{stat.value}</div>
             <div className="stat-label">{stat.label}</div>
           </div>
         </article>
