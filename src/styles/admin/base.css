@@ -392,6 +392,60 @@
   transform: translateY(-1px);
 }
 
+.logout-modal-icon.tone-red {
+  border-color: rgba(248, 113, 113, 0.24);
+  background: var(--red-g);
+  color: var(--red);
+  animation: logoutIconPulseRed 2s ease-in-out infinite;
+}
+
+.logout-modal-kicker.tone-red {
+  color: var(--red);
+}
+
+.logout-modal-icon.tone-green {
+  border-color: rgba(74, 222, 128, 0.22);
+  background: var(--green-g);
+  color: var(--green);
+  animation: logoutIconPulseGreen 2s ease-in-out infinite;
+}
+
+.logout-modal-kicker.tone-green {
+  color: var(--green);
+}
+
+@keyframes logoutIconPulseRed {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(248, 113, 113, 0);
+  }
+}
+
+@keyframes logoutIconPulseGreen {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(74, 222, 128, 0);
+  }
+}
+
+.logout-confirm-btn.tone-green {
+  border-color: rgba(74, 222, 128, 0.24);
+  background: rgba(74, 222, 128, 0.13);
+  color: #86efac;
+}
+
+.logout-confirm-btn.tone-green:hover {
+  border-color: rgba(74, 222, 128, 0.42);
+  background: rgba(74, 222, 128, 0.18);
+  box-shadow: 0 12px 28px rgba(74, 222, 128, 0.1);
+}
+
 @keyframes logoutBackdropIn {
   from {
     opacity: 0;

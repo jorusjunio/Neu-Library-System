@@ -8,12 +8,14 @@ import {
   FileSpreadsheet,
   Search,
   ShieldAlert,
+  UserCheck,
   Users as UsersIcon,
-  X,
+  UserX,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { AmbientBackground } from "@/components/shared/AmbientBackground";
+import { ConfirmModal } from "./components/ConfirmModal";
 import { FilterBar } from "./components/FilterBar";
 import { FilterDropdown } from "./components/FilterDropdown";
 import { LoginView } from "./components/LoginView";
@@ -43,6 +45,9 @@ export default function AdminPage() {
   const [logoutModalClosing, setLogoutModalClosing] = useState(false);
   const logoutCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [blockTarget, setBlockTarget] = useState<Visitor | null>(null);
+  const [blockModalClosing, setBlockModalClosing] = useState(false);
+  const blockCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
@@ -52,6 +57,10 @@ export default function AdminPage() {
 
       if (noticeTimer.current) {
         clearTimeout(noticeTimer.current);
+      }
+
+      if (blockCloseTimer.current) {
+        clearTimeout(blockCloseTimer.current);
       }
     };
   }, []);
@@ -318,6 +327,38 @@ export default function AdminPage() {
     signOut({ callbackUrl: "/admin" });
   }
 
+  function openBlockModal(visitor: Visitor) {
+    if (blockCloseTimer.current) {
+      clearTimeout(blockCloseTimer.current);
+      blockCloseTimer.current = null;
+    }
+
+    setBlockModalClosing(false);
+    setBlockTarget(visitor);
+  }
+
+  function closeBlockModal() {
+    if (blockModalClosing || !blockTarget) {
+      return;
+    }
+
+    setBlockModalClosing(true);
+    blockCloseTimer.current = setTimeout(() => {
+      setBlockTarget(null);
+      setBlockModalClosing(false);
+      blockCloseTimer.current = null;
+    }, 190);
+  }
+
+  async function confirmBlockToggle() {
+    if (!blockTarget) return;
+
+    const visitor = blockTarget;
+
+    closeBlockModal();
+    await toggleVisitorBlocked(visitor);
+  }
+
   return (
     <main className="admin-page">
       <AmbientBackground />
@@ -514,7 +555,7 @@ export default function AdminPage() {
                         <button
                           type="button"
                           className={visitor.blocked ? "row-action-restore" : "row-action-warn"}
-                          onClick={() => toggleVisitorBlocked(visitor)}
+                          onClick={() => openBlockModal(visitor)}
                           aria-label={visitor.blocked ? "Unblock visitor" : "Block visitor"}
                           title={visitor.blocked ? "Unblock visitor" : "Block visitor"}
                         >
@@ -568,31 +609,35 @@ export default function AdminPage() {
         </div>
       )}
 
-      {logoutModalOpen && (
-        <div className={`logout-modal-backdrop ${logoutModalClosing ? "is-closing" : ""}`} role="presentation">
-          <section className={`logout-modal ${logoutModalClosing ? "is-closing" : ""}`} role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
-            <button type="button" className="logout-modal-close" onClick={closeLogoutModal} aria-label="Close logout confirmation">
-              <X size={16} strokeWidth={2.4} />
-            </button>
-            <div className="logout-modal-icon">
-              <ShieldAlert size={24} strokeWidth={2.2} />
-            </div>
-            <p className="logout-modal-kicker">Session Control</p>
-            <h2 id="logoutTitle">Sign out of admin?</h2>
-            <p className="logout-modal-text">
-              You will return to the admin login screen. Make sure any current changes are saved.
-            </p>
-            <div className="logout-modal-actions">
-              <button type="button" className="logout-cancel-btn" onClick={closeLogoutModal}>
-                Cancel
-              </button>
-              <button type="button" className="logout-confirm-btn" onClick={confirmSignOut}>
-                Sign Out
-              </button>
-            </div>
-          </section>
-        </div>
-      )}
+      <ConfirmModal
+        open={logoutModalOpen}
+        closing={logoutModalClosing}
+        icon={ShieldAlert}
+        tone="gold"
+        kicker="Session Control"
+        title="Sign out of admin?"
+        description="You will return to the admin login screen. Make sure any current changes are saved."
+        confirmLabel="Sign Out"
+        onConfirm={confirmSignOut}
+        onCancel={closeLogoutModal}
+      />
+
+      <ConfirmModal
+        open={!!blockTarget}
+        closing={blockModalClosing}
+        icon={blockTarget?.blocked ? UserCheck : UserX}
+        tone={blockTarget?.blocked ? "green" : "red"}
+        kicker="Visitor Access"
+        title={blockTarget ? `${blockTarget.blocked ? "Unblock" : "Block"} ${blockTarget.name}?` : ""}
+        description={
+          blockTarget?.blocked
+            ? "They will be able to check in at the library again."
+            : "They won't be able to check in at the library until you unblock them."
+        }
+        confirmLabel={blockTarget?.blocked ? "Unblock" : "Block"}
+        onConfirm={confirmBlockToggle}
+        onCancel={closeBlockModal}
+      />
     </main>
   );
 }
