@@ -805,7 +805,14 @@
   width: 100%;
   max-height: 190px;
   gap: 3px;
+  overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.donut-legend::-webkit-scrollbar {
+  display: none;
 }
 
 .donut-legend-row {
