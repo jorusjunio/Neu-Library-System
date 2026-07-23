@@ -1,508 +1,33 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowLeftToLine,
-  BarChart3,
   BookOpen,
   Building2,
-  ChevronDown,
   FileDown,
   FileSpreadsheet,
-  FileText,
-  LogOut,
   Search,
-  Settings,
   ShieldAlert,
-  Trophy,
-  UserCog,
-  Users,
+  Users as UsersIcon,
   X,
 } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { type ComponentType, useEffect, useRef, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
 import { AmbientBackground } from "@/components/shared/AmbientBackground";
-
-type Tab = "overview" | "logs" | "topvisitors" | "students" | "settings";
-type VisitorStatusFilter = "all" | "active" | "blocked";
-type DateRangeFilter = "today" | "week" | "month" | "all";
-type IconComponent = ComponentType<{ size?: number; strokeWidth?: number }>;
-
-type Visitor = {
-  id: string;
-  schoolId: string;
-  email: string;
-  name: string;
-  college: string;
-  type: string;
-  totalVisits: number;
-  currentStreak: number;
-  longestStreak: number;
-  lastVisitAt: string | null;
-  blocked: boolean;
-};
-
-type VisitLog = {
-  id: string;
-  schoolId: string;
-  visitorName: string;
-  college: string;
-  type: string;
-  purposeSnapshot: string;
-  visitedAt: string;
-};
-
-type Purpose = {
-  id: string;
-  name: string;
-  active: boolean;
-  sortOrder: number;
-};
-
-type AdminUser = {
-  id: string;
-  username: string;
-  email: string | null;
-  name: string;
-  active: boolean;
-  createdAt: string;
-};
-
-type CountRow = {
-  label: string;
-  count: number;
-};
-
-type DashboardData = {
-  stats: {
-    totalVisits: number;
-    uniqueVisitors: number;
-    topPurpose: string;
-    topCollege: string;
-  };
-  visitors: Visitor[];
-  visitLogs: VisitLog[];
-  purposes: Purpose[];
-  admins: AdminUser[];
-  charts: {
-    visitsPerDay: CountRow[];
-    purposeBreakdown: CountRow[];
-    visitsByHour: CountRow[];
-    topColleges: CountRow[];
-  };
-};
-
-const tabs: Array<{ id: Tab; label: string; icon: IconComponent; title: string }> = [
-  { id: "overview", label: "Overview", icon: BarChart3, title: "Overview" },
-  { id: "logs", label: "Visitor Logs", icon: FileText, title: "Visitor Logs" },
-  { id: "topvisitors", label: "Top Visitors", icon: Trophy, title: "Top Visitors" },
-  { id: "students", label: "Visitors", icon: Users, title: "Visitors" },
-  { id: "settings", label: "Settings", icon: Settings, title: "Settings" },
-];
-
-const sidebarSections: Array<{ label: string; items: Tab[] }> = [
-  { label: "Dashboard", items: ["overview"] },
-  { label: "Library Activity", items: ["logs", "topvisitors", "students"] },
-  { label: "Management", items: ["settings"] },
-];
-
-const dateRangeOptions: Array<{ label: string; value: DateRangeFilter }> = [
-  { label: "Today", value: "today" },
-  { label: "This Week", value: "week" },
-  { label: "This Month", value: "month" },
-  { label: "All Time", value: "all" },
-];
-
-function displayType(type: string) {
-  return type.charAt(0) + type.slice(1).toLowerCase();
-}
-
-function formatDate(value: string | null) {
-  if (!value) return "-";
-
-  return new Intl.DateTimeFormat("en-PH", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    timeZone: "Asia/Manila",
-  }).format(new Date(value));
-}
-
-function formatTime(value: string) {
-  return new Intl.DateTimeFormat("en-PH", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    timeZone: "Asia/Manila",
-  }).format(new Date(value));
-}
-
-function escapeCsv(value: string | number | null | undefined) {
-  const text = String(value ?? "");
-  return `"${text.replaceAll('"', '""')}"`;
-}
-
-function downloadBlob(filename: string, type: string, content: BlobPart) {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
-}
-
-function exportCsv(filename: string, headers: string[], rows: Array<Array<string | number | null | undefined>>) {
-  const csv = [
-    headers.map(escapeCsv).join(","),
-    ...rows.map((row) => row.map(escapeCsv).join(",")),
-  ].join("\r\n");
-
-  downloadBlob(filename, "text/csv;charset=utf-8", csv);
-}
-
-function escapePdfText(value: string | number | null | undefined) {
-  return String(value ?? "-")
-    .replaceAll("\\", "\\\\")
-    .replaceAll("(", "\\(")
-    .replaceAll(")", "\\)");
-}
-
-function exportPdf(filename: string, title: string, headers: string[], rows: Array<Array<string | number | null | undefined>>) {
-  const lines = [
-    title,
-    headers.join(" | "),
-    "-".repeat(Math.min(96, headers.join(" | ").length)),
-    ...rows.map((row) => row.map((cell) => String(cell ?? "-")).join(" | ")),
-  ].slice(0, 90);
-  const streamLines = ["BT", "/F1 10 Tf", "36 792 Td"];
-
-  lines.forEach((line, index) => {
-    if (index > 0) {
-      streamLines.push("0 -14 Td");
-    }
-
-    streamLines.push(`(${escapePdfText(line).slice(0, 132)}) Tj`);
-  });
-
-  streamLines.push("ET");
-
-  const stream = streamLines.join("\n");
-  const objects = [
-    "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
-    "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
-    "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n",
-    "4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n",
-    `5 0 obj\n<< /Length ${stream.length} >>\nstream\n${stream}\nendstream\nendobj\n`,
-  ];
-  let pdf = "%PDF-1.4\n";
-  const offsets = [0];
-
-  objects.forEach((object) => {
-    offsets.push(pdf.length);
-    pdf += object;
-  });
-
-  const xrefOffset = pdf.length;
-  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
-  offsets.slice(1).forEach((offset) => {
-    pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
-  });
-  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
-
-  downloadBlob(filename, "application/pdf", pdf);
-}
-
-function includesQuery(values: Array<string | number | null | undefined>, query: string) {
-  const normalized = query.trim().toLowerCase();
-
-  if (!normalized) return true;
-
-  return values.some((value) => String(value ?? "").toLowerCase().includes(normalized));
-}
-
-function dateKey(value: Date) {
-  return value.toLocaleDateString("en-CA", { timeZone: "Asia/Manila" });
-}
-
-function inDateRange(value: string, range: DateRangeFilter) {
-  if (range === "all") return true;
-
-  const date = new Date(value);
-  const now = new Date();
-
-  if (range === "today") {
-    return dateKey(date) === dateKey(now);
-  }
-
-  if (range === "month") {
-    return (
-      date.toLocaleDateString("en-CA", { month: "2-digit", timeZone: "Asia/Manila" }) ===
-        now.toLocaleDateString("en-CA", { month: "2-digit", timeZone: "Asia/Manila" }) &&
-      date.toLocaleDateString("en-CA", { year: "numeric", timeZone: "Asia/Manila" }) ===
-        now.toLocaleDateString("en-CA", { year: "numeric", timeZone: "Asia/Manila" })
-    );
-  }
-
-  const start = new Date(now);
-  start.setDate(now.getDate() - 6);
-  start.setHours(0, 0, 0, 0);
-
-  return date >= start && date <= now;
-}
-
-function countBy(rows: VisitLog[], getLabel: (row: VisitLog) => string) {
-  const map = new Map<string, number>();
-
-  rows.forEach((row) => {
-    const label = getLabel(row) || "Unknown";
-    map.set(label, (map.get(label) ?? 0) + 1);
-  });
-
-  return Array.from(map, ([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count);
-}
-
-function visitsPerDay(rows: VisitLog[]) {
-  return countBy(rows, (row) => dateKey(new Date(row.visitedAt)))
-    .sort((a, b) => a.label.localeCompare(b.label))
-    .slice(-7);
-}
-
-function visitsByHour(rows: VisitLog[]) {
-  return countBy(rows, (row) =>
-    new Intl.DateTimeFormat("en-PH", {
-      hour: "2-digit",
-      hour12: false,
-      timeZone: "Asia/Manila",
-    }).format(new Date(row.visitedAt)),
-  ).sort((a, b) => a.label.localeCompare(b.label));
-}
-
-type DropdownOption = {
-  label: string;
-  value: string;
-};
-
-function FilterDropdown({
-  label,
-  options,
-  value,
-  onChange,
-  compact = false,
-}: {
-  label: string;
-  options: DropdownOption[];
-  value: string;
-  onChange: (value: string) => void;
-  compact?: boolean;
-}) {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const activeOption = options.find((option) => option.value === value) ?? options[0];
-
-  useEffect(() => {
-    if (!open) return;
-
-    function handlePointerDown(event: PointerEvent) {
-      if (!dropdownRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open]);
-
-  return (
-    <div ref={dropdownRef} className={`custom-dropdown ${compact ? "compact" : ""} ${open ? "is-open" : ""}`}>
-      <button type="button" className="custom-dropdown-trigger" onClick={() => setOpen((current) => !current)}>
-        <span>{compact ? activeOption.label : label}</span>
-        {!compact && <strong>{activeOption.label}</strong>}
-        <ChevronDown size={14} strokeWidth={2.4} />
-      </button>
-      {open && (
-        <div className="custom-dropdown-menu">
-          {options.map((option) => (
-            <button
-              type="button"
-              className={`custom-dropdown-option ${option.value === value ? "active" : ""}`}
-              key={option.value}
-              onClick={() => {
-                onChange(option.value);
-                setOpen(false);
-              }}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function maxCount(rows: CountRow[]) {
-  return Math.max(1, ...rows.map((row) => row.count));
-}
-
-const chartColors = ["#4a9eff", "#4ade80", "#f0c040", "#a78bfa", "#f87171", "#38bdf8"];
-
-function pieBackground(rows: CountRow[]) {
-  const total = rows.reduce((sum, row) => sum + row.count, 0);
-
-  if (!total) {
-    return "rgba(255,255,255,0.06)";
-  }
-
-  let cursor = 0;
-  const slices = rows.map((row, index) => {
-    const start = cursor;
-    const size = (row.count / total) * 100;
-    cursor += size;
-    return `${chartColors[index % chartColors.length]} ${start}% ${cursor}%`;
-  });
-
-  return `conic-gradient(${slices.join(", ")})`;
-}
-
-function LineChart({ rows }: { rows: CountRow[] }) {
-  const chartRows = rows.length ? rows : [{ label: "No logs", count: 0 }];
-  const max = maxCount(chartRows);
-  const width = 1000;
-  const height = 260;
-  const padding = { top: 22, right: 10, bottom: 34, left: 10 };
-  const plotWidth = width - padding.left - padding.right;
-  const plotHeight = height - padding.top - padding.bottom;
-  const points = chartRows.map((row, index) => {
-    const x = padding.left + (chartRows.length === 1 ? plotWidth / 2 : (index / (chartRows.length - 1)) * plotWidth);
-    const y = padding.top + plotHeight - (row.count / max) * plotHeight;
-
-    return { ...row, x, y };
-  });
-  const polyline = points.map((point) => `${point.x},${point.y}`).join(" ");
-  const area = `${padding.left},${padding.top + plotHeight} ${polyline} ${padding.left + plotWidth},${padding.top + plotHeight}`;
-
-  return (
-    <div className="line-chart-wrap">
-      <svg className="line-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Visits per day line chart">
-        {[0, 1, 2, 3].map((line) => {
-          const y = padding.top + (plotHeight / 3) * line;
-
-          return <line className="line-chart-grid" key={line} x1={padding.left} y1={y} x2={width - padding.right} y2={y} />;
-        })}
-        <polygon className="line-chart-area" points={area} />
-        <polyline className="line-chart-stroke" points={polyline} />
-        {points.map((point) => (
-          <g className="line-chart-point" key={point.label} transform={`translate(${point.x} ${point.y})`}>
-            <circle r="5" />
-            <text y="-11">{point.count}</text>
-          </g>
-        ))}
-        {points.map((point) => (
-          <text className="line-chart-label" key={`${point.label}-label`} x={point.x} y={height - 13}>
-            {point.label.slice(5)}
-          </text>
-        ))}
-      </svg>
-    </div>
-  );
-}
-
-function LoginView() {
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  async function submit() {
-    setError("");
-    setNotice("");
-    setSubmitting(true);
-
-    const result = await signIn("credentials", {
-      username,
-      password,
-      redirect: false,
-    });
-
-    setSubmitting(false);
-
-    if (result?.error) {
-      setError("Invalid username or password.");
-    }
-  }
-
-  return (
-    <main className="login-page">
-      <AmbientBackground />
-      <section className="admin-login-card">
-        <div className="admin-login-logo">
-          <Image src="/assets/neu-logo.png" alt="NEU Logo" width={64} height={64} />
-        </div>
-        <p className="admin-login-kicker">Administrator Access</p>
-        <h1 className="admin-login-title">NEU Library Dashboard</h1>
-        <p className="admin-login-sub">
-          Sign in with your admin account to view live Neon data.
-        </p>
-        <div className="admin-login-fields">
-          <input
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            className="admin-login-input"
-            placeholder="Username"
-          />
-          <input
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") submit();
-            }}
-            type="password"
-            className="admin-login-input"
-            placeholder="Password"
-          />
-        </div>
-        {error && <p className="admin-login-error">{error}</p>}
-        <button type="button" className="admin-login-btn" onClick={submit} disabled={submitting}>
-          {submitting ? "Signing In..." : "Sign In"}
-        </button>
-        <button
-          type="button"
-          className="admin-google-btn"
-          onClick={() => {
-            setError("");
-            setNotice("Google login is ready in the UI. We will connect the provider next.");
-          }}
-        >
-          <span className="google-mark" aria-hidden="true">G</span>
-          Continue with Google
-          <span className="soon-pill">soon</span>
-        </button>
-        {notice && <p className="admin-login-note">{notice}</p>}
-        <Link href="/entrance" className="admin-login-secondary">
-          <ArrowLeftToLine size={15} />
-          Open Entrance Screen
-        </Link>
-      </section>
-    </main>
-  );
-}
+import { FilterBar } from "./components/FilterBar";
+import { FilterDropdown } from "./components/FilterDropdown";
+import { LoginView } from "./components/LoginView";
+import { MetricsGrid, type StatCard } from "./components/MetricsGrid";
+import { Sidebar } from "./components/Sidebar";
+import { HourlyVisitsBarChart } from "./components/charts/HourlyVisitsBarChart";
+import { PurposeDonutChart } from "./components/charts/PurposeDonutChart";
+import { TopCollegesList } from "./components/charts/TopCollegesList";
+import { VisitsLineChart } from "./components/charts/VisitsLineChart";
+import { dateRangeOptions, tabs } from "./config";
+import { useDashboardFilters } from "./hooks/useDashboardFilters";
+import { exportCsv, exportPdf } from "./lib/export";
+import { countBy, dateKey, displayType, formatDate, formatTime, inDateRange, includesQuery, visitsByHour, visitsPerDay } from "./lib/format";
+import type { DashboardData, DateRangeFilter, Tab, Visitor, VisitorStatusFilter } from "./types";
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -513,10 +38,7 @@ export default function AdminPage() {
   const [logSearch, setLogSearch] = useState("");
   const [visitorSearch, setVisitorSearch] = useState("");
   const [visitorStatus, setVisitorStatus] = useState<VisitorStatusFilter>("all");
-  const [dateRange, setDateRange] = useState<DateRangeFilter>("all");
-  const [purposeFilter, setPurposeFilter] = useState("");
-  const [collegeFilter, setCollegeFilter] = useState("");
-  const [visitorTypeFilter, setVisitorTypeFilter] = useState("");
+  const { filters, setPurpose, setCollege, setVisitorType, setDateRange, reset: resetFilters } = useDashboardFilters();
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [logoutModalClosing, setLogoutModalClosing] = useState(false);
   const logoutCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -651,10 +173,10 @@ export default function AdminPage() {
   });
   const overviewLogs = visitLogs.filter((log) => {
     return (
-      inDateRange(log.visitedAt, dateRange) &&
-      (!purposeFilter || log.purposeSnapshot === purposeFilter) &&
-      (!collegeFilter || log.college === collegeFilter) &&
-      (!visitorTypeFilter || log.type === visitorTypeFilter)
+      inDateRange(log.visitedAt, filters.dateRange) &&
+      (!filters.purpose || log.purposeSnapshot === filters.purpose) &&
+      (!filters.college || log.college === filters.college) &&
+      (!filters.visitorType || log.type === filters.visitorType)
     );
   });
   const overviewCharts = {
@@ -669,7 +191,7 @@ export default function AdminPage() {
     topPurpose: overviewCharts.purposeBreakdown[0]?.label ?? "-",
     topCollege: overviewCharts.topColleges[0]?.label ?? "-",
   };
-  const stats = [
+  const stats: StatCard[] = [
     {
       icon: ArrowLeftToLine,
       tone: "blue",
@@ -677,7 +199,7 @@ export default function AdminPage() {
       label: "Total Visits",
     },
     {
-      icon: Users,
+      icon: UsersIcon,
       tone: "gold",
       value: overviewStats.uniqueVisitors,
       label: "Unique Visitors",
@@ -701,12 +223,6 @@ export default function AdminPage() {
     { label: "All Visitors", value: "" },
     ...visitorTypes.map((type) => ({ label: displayType(type), value: type })),
   ];
-  const hourMax = maxCount(overviewCharts.visitsByHour);
-  const collegeMax = maxCount(overviewCharts.topColleges);
-  const purposeRows = overviewCharts.purposeBreakdown.length
-    ? overviewCharts.purposeBreakdown
-    : [{ label: "No logs yet", count: 0 }];
-  const purposeTotal = purposeRows.reduce((sum, row) => sum + row.count, 0);
   const topVisitors = visitors.slice().sort((a, b) => b.totalVisits - a.totalVisits);
   const logExportRows = filteredLogs.map((log, index) => [
     index + 1,
@@ -806,69 +322,13 @@ export default function AdminPage() {
     <main className="admin-page">
       <AmbientBackground />
 
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <Image
-            src="/assets/neu-logo.png"
-            alt="NEU"
-            width={38}
-            height={38}
-            className="sidebar-neu-logo"
-          />
-          <div className="sidebar-brand">
-            <div className="logo-title">NEU Library</div>
-            <div className="logo-sub">Admin Dashboard</div>
-          </div>
-        </div>
-
-        <nav className="sidebar-nav">
-          {sidebarSections.map((section) => (
-            <div className="nav-section" key={section.label}>
-              <div className="nav-section-label">{section.label}</div>
-              {section.items.map((tabId) => {
-                const tab = tabs.find((item) => item.id === tabId);
-
-                if (!tab) return null;
-
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    className={`nav-item ${activeTab === tab.id ? "active" : ""}`}
-                    onClick={() => setActiveTab(tab.id)}
-                  >
-                    <span className="nav-icon">
-                      <tab.icon size={17} strokeWidth={2.2} />
-                    </span>
-                    <span className="nav-label">{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
-
-        <div className="sidebar-bottom">
-          <div className="sidebar-user">
-            <div className="sidebar-user-avatar-wrap">
-              <div className="sidebar-user-avatar">
-                <UserCog size={17} />
-              </div>
-              <span className="sidebar-online-dot" />
-            </div>
-            <div className="sidebar-user-info">
-              <div className="sidebar-user-name">{session.user.name ?? "Library Administrator"}</div>
-              <div className="sidebar-user-email">{session.user.email ?? "admin@neu.edu.ph"}</div>
-            </div>
-          </div>
-          <button className="nav-item entrance-link" type="button" onClick={openLogoutModal}>
-            <span className="nav-icon">
-              <LogOut size={17} strokeWidth={2.2} />
-            </span>
-            <span className="nav-label">Sign Out</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        userName={session.user.name ?? "Library Administrator"}
+        userEmail={session.user.email ?? "admin@neu.edu.ph"}
+        onSignOutClick={openLogoutModal}
+      />
 
       <section className="admin-main">
         <header className="topbar">
@@ -881,7 +341,7 @@ export default function AdminPage() {
               compact
               label="Date range"
               options={dateRangeOptions}
-              value={dateRange}
+              value={filters.dateRange}
               onChange={(value) => setDateRange(value as DateRangeFilter)}
             />
           </div>
@@ -891,96 +351,43 @@ export default function AdminPage() {
 
         {activeTab === "overview" && (
           <div className="tab-content active">
-            <div className="stat-filter-bar">
-              <span className="stat-filter-label">Filter by:</span>
-              <FilterDropdown label="Purpose" options={purposeOptions} value={purposeFilter} onChange={setPurposeFilter} />
-              <FilterDropdown label="College" options={collegeOptions} value={collegeFilter} onChange={setCollegeFilter} />
-              <FilterDropdown label="Visitor" options={visitorTypeOptions} value={visitorTypeFilter} onChange={setVisitorTypeFilter} />
-              <button
-                className="stat-filter-clear"
-                type="button"
-                onClick={() => {
-                  setPurposeFilter("");
-                  setCollegeFilter("");
-                  setVisitorTypeFilter("");
-                }}
-              >
-                Clear
-              </button>
-            </div>
+            <FilterBar
+              filters={filters}
+              purposeOptions={purposeOptions}
+              collegeOptions={collegeOptions}
+              visitorTypeOptions={visitorTypeOptions}
+              onPurposeChange={setPurpose}
+              onCollegeChange={setCollege}
+              onVisitorTypeChange={setVisitorType}
+              onClear={resetFilters}
+            />
 
-            <div className="stat-cards">
-              {stats.map((stat) => (
-                <article className="stat-card" key={stat.label}>
-                  <div className={`stat-icon-wrap ${stat.tone}`}>
-                    <stat.icon size={21} strokeWidth={2.2} />
-                  </div>
-                  <div className="stat-info">
-                    <div className="stat-value">{stat.value}</div>
-                    <div className="stat-label">{stat.label}</div>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <MetricsGrid stats={stats} />
 
             <div className="charts-grid">
               <section className="chart-card span-2 line-chart-card">
                 <div className="chart-header">
                   <h3 className="chart-title">Visits Per Day</h3>
                 </div>
-                <LineChart rows={overviewCharts.visitsPerDay} />
+                <VisitsLineChart rows={overviewCharts.visitsPerDay} />
               </section>
               <section className="chart-card">
                 <div className="chart-header">
                   <h3 className="chart-title">Purpose Breakdown</h3>
                 </div>
-                <div className="donut-chart-wrap">
-                  <div className="donut-chart" style={{ background: pieBackground(purposeRows) }}>
-                    <span>{purposeTotal}</span>
-                    <small>Visits</small>
-                  </div>
-                  <div className="donut-legend">
-                    {purposeRows.map((row, index) => (
-                      <div className="donut-legend-row" key={row.label}>
-                        <span
-                          className="donut-dot"
-                          style={{ background: chartColors[index % chartColors.length] }}
-                        />
-                        <p>{row.label}</p>
-                        <strong>{row.count}</strong>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <PurposeDonutChart rows={overviewCharts.purposeBreakdown} />
               </section>
               <section className="chart-card">
                 <div className="chart-header">
                   <h3 className="chart-title">Visits by Hour</h3>
                 </div>
-                <div className="real-chart bars compact">
-                  {(overviewCharts.visitsByHour.length ? overviewCharts.visitsByHour : [{ label: "No logs", count: 0 }]).map((row) => (
-                    <span key={row.label} style={{ height: `${Math.max(6, (row.count / hourMax) * 100)}%` }}>
-                      <strong>{row.count}</strong>
-                      <small>{row.label}</small>
-                    </span>
-                  ))}
-                </div>
+                <HourlyVisitsBarChart rows={overviewCharts.visitsByHour} />
               </section>
               <section className="chart-card span-2 metric-chart-card">
                 <div className="chart-header">
                   <h3 className="chart-title">Top Colleges</h3>
                 </div>
-                <div className="metric-list">
-                  {(overviewCharts.topColleges.length ? overviewCharts.topColleges : [{ label: "No logs yet", count: 0 }]).map((row) => (
-                    <div className="metric-row" key={row.label}>
-                      <div>
-                        <span>{row.label}</span>
-                        <i style={{ width: `${Math.max(4, (row.count / collegeMax) * 100)}%` }} />
-                      </div>
-                      <strong>{row.count}</strong>
-                    </div>
-                  ))}
-                </div>
+                <TopCollegesList rows={overviewCharts.topColleges} />
               </section>
             </div>
           </div>
