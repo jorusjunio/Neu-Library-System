@@ -1,14 +1,8 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { VisitorType } from "@/generated/prisma/enums";
 import { errorResponse, handlePrismaError } from "@/lib/api-errors";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  return Boolean(session?.user);
-}
+import { requireAdminSession } from "@/lib/require-admin";
 
 function parseVisitorType(value: unknown) {
   if (value === VisitorType.STUDENT || value === VisitorType.FACULTY || value === VisitorType.EMPLOYEE) {
@@ -19,7 +13,7 @@ function parseVisitorType(value: unknown) {
 }
 
 export async function POST(request: Request) {
-  if (!(await requireAdmin())) {
+  if (!(await requireAdminSession())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

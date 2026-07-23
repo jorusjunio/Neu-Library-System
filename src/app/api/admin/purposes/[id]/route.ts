@@ -1,20 +1,14 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { errorResponse, handlePrismaError } from "@/lib/api-errors";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { requireAdminSession } from "@/lib/require-admin";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  return Boolean(session?.user);
-}
-
 export async function PATCH(request: Request, context: RouteContext) {
-  if (!(await requireAdmin())) {
+  if (!(await requireAdminSession())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -52,7 +46,7 @@ export async function PATCH(request: Request, context: RouteContext) {
 }
 
 export async function DELETE(_request: Request, context: RouteContext) {
-  if (!(await requireAdmin())) {
+  if (!(await requireAdminSession())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
