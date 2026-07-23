@@ -37,12 +37,14 @@ Affected file:
 
 See [fixes/issue-4-typed-error-handling.md](fixes/issue-4-typed-error-handling.md) for details.
 
-### Issue 5: Environment dependency can cause startup failures
+### Issue 5: Environment dependency can cause startup failures — ✅ Fixed
 The Prisma client and configuration depend on the database environment variables being available. Missing configuration can cause startup or migration issues in a new environment.
 
 Affected files:
 - [src/lib/prisma.ts](src/lib/prisma.ts)
 - [prisma.config.ts](prisma.config.ts)
 
+See [fixes/issue-5-env-startup-validation.md](fixes/issue-5-env-startup-validation.md) for details.
+
 ## Summary
-The project is functional and builds successfully, but the main concerns are around access control, scalability, and maintainability.
+All five issues above have been fixed — see each linked writeup under [fixes/](fixes/) for the root cause, the change, and how it was verified.
