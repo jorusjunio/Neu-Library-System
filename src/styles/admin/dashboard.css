@@ -529,11 +529,16 @@
 .chart-axis-label {
   position: absolute;
   transform: translateX(-50%);
-  color: var(--text-3);
+  color: var(--text-2);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
+  text-shadow: none;
+  filter: none;
+  text-rendering: optimizeLegibility;
   white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .hour-chart-wrap {
@@ -917,10 +922,15 @@
 
 .metric-row-percent {
   flex-shrink: 0;
-  color: var(--text-3);
+  color: var(--text-2);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
+  text-shadow: none;
+  filter: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .metric-track {
