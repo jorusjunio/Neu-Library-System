@@ -38,7 +38,7 @@ export default function AdminPage() {
   const [logSearch, setLogSearch] = useState("");
   const [visitorSearch, setVisitorSearch] = useState("");
   const [visitorStatus, setVisitorStatus] = useState<VisitorStatusFilter>("all");
-  const { filters, setPurpose, setCollege, setVisitorType, setDateRange, reset: resetFilters } = useDashboardFilters();
+  const { filters, setPurpose, setCollege, setVisitorType, setDateRange, clearQuickFilters } = useDashboardFilters();
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [logoutModalClosing, setLogoutModalClosing] = useState(false);
   const logoutCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -359,7 +359,7 @@ export default function AdminPage() {
               onPurposeChange={setPurpose}
               onCollegeChange={setCollege}
               onVisitorTypeChange={setVisitorType}
-              onClear={resetFilters}
+              onClearAll={clearQuickFilters}
             />
 
             <MetricsGrid stats={stats} />

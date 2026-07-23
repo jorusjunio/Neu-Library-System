@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { DropdownOption } from "../types";
 
@@ -10,16 +10,20 @@ export function FilterDropdown({
   value,
   onChange,
   compact = false,
+  clearable = false,
 }: {
   label: string;
   options: DropdownOption[];
   value: string;
   onChange: (value: string) => void;
   compact?: boolean;
+  clearable?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const activeOption = options.find((option) => option.value === value) ?? options[0];
+  const defaultValue = options[0]?.value ?? "";
+  const isCleared = clearable && value !== defaultValue;
 
   useEffect(() => {
     if (!open) return;
@@ -47,11 +51,27 @@ export function FilterDropdown({
 
   return (
     <div ref={dropdownRef} className={`custom-dropdown ${compact ? "compact" : ""} ${open ? "is-open" : ""}`}>
-      <button type="button" className="custom-dropdown-trigger" onClick={() => setOpen((current) => !current)}>
-        <span>{compact ? activeOption.label : label}</span>
-        {!compact && <strong>{activeOption.label}</strong>}
-        <ChevronDown size={14} strokeWidth={2.4} />
-      </button>
+      <div className={`custom-dropdown-trigger-wrap ${isCleared ? "has-clear" : ""}`}>
+        <button type="button" className="custom-dropdown-trigger" onClick={() => setOpen((current) => !current)}>
+          <span>{compact ? activeOption.label : label}</span>
+          {!compact && <strong>{activeOption.label}</strong>}
+          <ChevronDown size={14} strokeWidth={2.4} className="custom-dropdown-chevron" />
+        </button>
+        {isCleared && (
+          <button
+            type="button"
+            className="custom-dropdown-clear"
+            aria-label={`Clear ${label} filter`}
+            onClick={(event) => {
+              event.stopPropagation();
+              setOpen(false);
+              onChange(defaultValue);
+            }}
+          >
+            <X size={13} strokeWidth={2.6} />
+          </button>
+        )}
+      </div>
       {open && (
         <div className="custom-dropdown-menu">
           {options.map((option) => (
