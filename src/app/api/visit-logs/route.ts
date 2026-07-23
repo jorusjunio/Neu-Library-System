@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { errorResponse, handlePrismaError } from "@/lib/api-errors";
+import { ApiError, errorResponse, handlePrismaError } from "@/lib/api-errors";
 import { prisma } from "@/lib/prisma";
 import { getNextVisitStreak } from "@/lib/visit-streak";
 
@@ -22,11 +22,11 @@ export async function POST(request: Request) {
       });
 
       if (!visitor) {
-        throw new Error("VISITOR_NOT_FOUND");
+        throw new ApiError("Visitor was not found.", 404);
       }
 
       if (visitor.blocked) {
-        throw new Error("VISITOR_BLOCKED");
+        throw new ApiError("This visitor account is blocked.", 403);
       }
 
       const purpose = purposeId
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         : await tx.purpose.findFirst({ where: { name: purposeName, active: true } });
 
       if (!purpose) {
-        throw new Error("PURPOSE_NOT_FOUND");
+        throw new ApiError("Selected purpose is inactive or unavailable.", 400);
       }
 
       const nextStreak = getNextVisitStreak(visitor.lastVisitAt, visitor.currentStreak, now);
@@ -65,20 +65,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ visitLog }, { status: 201 });
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message === "VISITOR_NOT_FOUND") {
-        return errorResponse("Visitor was not found.", 404);
-      }
-
-      if (error.message === "VISITOR_BLOCKED") {
-        return errorResponse("This visitor account is blocked.", 403);
-      }
-
-      if (error.message === "PURPOSE_NOT_FOUND") {
-        return errorResponse("Selected purpose is inactive or unavailable.", 400);
-      }
-    }
-
     return handlePrismaError(error, { fallback: "Visit could not be logged." });
   }
 }

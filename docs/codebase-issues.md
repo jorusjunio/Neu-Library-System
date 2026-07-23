@@ -29,11 +29,13 @@ Affected file:
 
 See [fixes/issue-3-dashboard-scalability.md](fixes/issue-3-dashboard-scalability.md) for details.
 
-### Issue 4: Error handling is somewhat brittle
+### Issue 4: Error handling is somewhat brittle — ✅ Fixed
 Some API routes rely on string-based error checks for flow control, which is harder to maintain and less robust than a typed approach.
 
 Affected file:
 - [src/app/api/visit-logs/route.ts](src/app/api/visit-logs/route.ts)
+
+See [fixes/issue-4-typed-error-handling.md](fixes/issue-4-typed-error-handling.md) for details.
 
 ### Issue 5: Environment dependency can cause startup failures
 The Prisma client and configuration depend on the database environment variables being available. Missing configuration can cause startup or migration issues in a new environment.
