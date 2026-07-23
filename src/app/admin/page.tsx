@@ -367,7 +367,7 @@ export default function AdminPage() {
             <MetricsGrid stats={stats} />
 
             <div className="charts-grid">
-              <section className="chart-card span-2 line-chart-card">
+              <section className="chart-card span-3 line-chart-card">
                 <div className="chart-header">
                   <h3 className="chart-title">Visits Per Day</h3>
                 </div>
@@ -379,7 +379,7 @@ export default function AdminPage() {
                 </div>
                 <PurposeDonutChart rows={overviewCharts.purposeBreakdown} />
               </section>
-              <section className="chart-card">
+              <section className="chart-card span-2">
                 <div className="chart-header">
                   <h3 className="chart-title">Visits by Hour</h3>
                 </div>

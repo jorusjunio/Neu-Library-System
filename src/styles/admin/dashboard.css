@@ -269,12 +269,45 @@
   align-items: center;
   gap: 16px;
   overflow: hidden;
-  padding: 19px 20px;
+  padding: 20px 22px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   background: var(--glass);
   backdrop-filter: blur(24px);
   transition: border-color 0.25s var(--ease), background 0.25s var(--ease), box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
+}
+
+.stat-card::before {
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 60%;
+  height: 100%;
+  content: "";
+  border-radius: 50%;
+  opacity: 0.5;
+  filter: blur(30px);
+  transition: opacity 0.3s ease;
+}
+
+.stat-card.blue::before {
+  background: radial-gradient(circle, rgba(74, 158, 255, 0.16), transparent 70%);
+}
+
+.stat-card.gold::before {
+  background: radial-gradient(circle, rgba(240, 192, 64, 0.16), transparent 70%);
+}
+
+.stat-card.green::before {
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.16), transparent 70%);
+}
+
+.stat-card.purple::before {
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.16), transparent 70%);
+}
+
+.stat-card:hover::before {
+  opacity: 0.85;
 }
 
 .stat-card::after {
@@ -295,13 +328,15 @@
 }
 
 .stat-icon-wrap {
+  position: relative;
+  z-index: 1;
   display: flex;
   width: 44px;
   height: 44px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   color: var(--text);
   transition: transform 0.25s var(--spring);
 }
@@ -331,6 +366,8 @@
 }
 
 .stat-info {
+  position: relative;
+  z-index: 1;
   min-width: 0;
 }
 
@@ -361,7 +398,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-4);
 }
 
@@ -371,7 +408,7 @@
   min-height: 260px;
   padding: 20px 22px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   background: var(--glass);
   backdrop-filter: blur(24px);
   transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
@@ -394,6 +431,10 @@
 
 .chart-card.span-2 {
   grid-column: span 2;
+}
+
+.chart-card.span-3 {
+  grid-column: span 3;
 }
 
 .line-chart-card {
@@ -424,7 +465,7 @@
   margin-bottom: 2px;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.035);
   color: var(--text-3);
 }
@@ -472,6 +513,25 @@
   text-transform: uppercase;
 }
 
+.chart-axis {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 16px;
+  pointer-events: none;
+}
+
+.chart-axis-label {
+  position: absolute;
+  transform: translateX(-50%);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .hour-chart-wrap {
   position: relative;
   width: 100%;
@@ -496,14 +556,6 @@
 
 .hour-chart-bar.is-active {
   filter: drop-shadow(0 4px 10px rgba(74, 222, 128, 0.22));
-}
-
-.hour-chart-label {
-  fill: var(--text-3);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  text-anchor: middle;
 }
 
 .hour-chart-hit {
@@ -618,13 +670,6 @@
   stroke: #4ade80;
 }
 
-.line-chart-label {
-  fill: var(--text-3);
-  font-size: 10px;
-  font-weight: 700;
-  text-anchor: middle;
-}
-
 .line-chart-hit {
   fill: transparent;
   cursor: pointer;
@@ -681,54 +726,65 @@
   justify-items: center;
 }
 
-.donut-chart {
+.donut-chart-svg-wrap {
   position: relative;
   display: flex;
-  width: 130px;
-  height: 130px;
-  flex-direction: column;
+  width: 168px;
+  height: 168px;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  border-radius: 50%;
-  transition: transform 0.3s var(--spring);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
-.donut-chart-wrap:hover .donut-chart {
-  transform: scale(1.02);
+.donut-chart-svg {
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.22));
 }
 
-.donut-chart::after {
+.donut-segment {
+  cursor: pointer;
+  outline: none;
+  transition: stroke-width 0.18s var(--ease), filter 0.18s var(--ease), opacity 0.18s ease;
+}
+
+.donut-chart-svg:has(.donut-segment.is-active) .donut-segment:not(.is-active) {
+  opacity: 0.35;
+}
+
+.donut-segment.is-active {
+  stroke-width: 28;
+  filter: brightness(1.15);
+}
+
+.donut-chart-center {
   position: absolute;
-  inset: 26px;
-  content: "";
-  border-radius: 50%;
-  background: rgb(8, 13, 27);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  pointer-events: none;
 }
 
-.donut-chart span,
-.donut-chart small {
-  position: relative;
-  z-index: 1;
-}
-
-.donut-chart span {
+.donut-chart-center span {
   color: var(--text);
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
-.donut-chart small {
+.donut-chart-center small {
+  max-width: 92px;
+  overflow: hidden;
   color: var(--text-3);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.7px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .donut-legend {
@@ -742,16 +798,24 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 9px;
-  padding: 6px 4px;
+  padding: 6px 8px;
   border-radius: var(--radius-xs);
   color: var(--text-2);
   font-size: 11px;
   font-weight: 500;
-  transition: background 0.16s ease;
+  cursor: pointer;
+  transition: background 0.16s ease, transform 0.16s ease;
 }
 
-.donut-legend-row:hover {
-  background: rgba(255, 255, 255, 0.04);
+.donut-legend-row:hover,
+.donut-legend-row.is-active {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateX(2px);
+}
+
+.donut-legend-row.is-active p {
+  color: var(--text);
+  font-weight: 700;
 }
 
 .donut-dot {
@@ -915,7 +979,7 @@
   gap: 16px;
   padding: 16px 18px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   background: var(--glass);
   backdrop-filter: blur(24px);
 }
@@ -925,7 +989,7 @@
   width: 48px;
   height: 48px;
   place-items: center;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--blue-g);
   font-size: 20px;
 }
@@ -958,7 +1022,7 @@
 .settings-card {
   padding: 20px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   background: var(--glass);
   backdrop-filter: blur(24px);
   transition: all 0.24s var(--spring);
@@ -981,7 +1045,7 @@
   width: 42px;
   height: 42px;
   place-items: center;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--blue-g);
   color: var(--blue);
 }
@@ -1063,12 +1127,16 @@
 
 @media (max-width: 1180px) {
   .stat-cards,
-  .charts-grid,
   .settings-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .chart-card.span-2 {
+  .charts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart-card.span-2,
+  .chart-card.span-3 {
     grid-column: span 2;
   }
 }
@@ -1084,7 +1152,8 @@
     grid-template-columns: 1fr;
   }
 
-  .chart-card.span-2 {
+  .chart-card.span-2,
+  .chart-card.span-3 {
     grid-column: span 1;
   }
 

@@ -127,11 +127,6 @@ export function VisitsLineChart({ rows }: { rows: CountRow[] }) {
             <circle className="line-chart-point-dot" r="3.5" />
           </g>
         ))}
-        {points.map((point) => (
-          <text className="line-chart-label" key={`${point.label}-label`} x={point.x} y={height - 13}>
-            {point.label.slice(5)}
-          </text>
-        ))}
         {bands.map((band, index) => (
           <rect
             key={`${band.label}-hit`}
@@ -148,6 +143,13 @@ export function VisitsLineChart({ rows }: { rows: CountRow[] }) {
           />
         ))}
       </svg>
+      <div className="chart-axis">
+        {points.map((point) => (
+          <span key={`${point.label}-axis`} className="chart-axis-label" style={{ left: `${(point.x / width) * 100}%` }}>
+            {point.label.slice(5)}
+          </span>
+        ))}
+      </div>
       {activePoint && (
         <div
           className="line-chart-tooltip is-visible"

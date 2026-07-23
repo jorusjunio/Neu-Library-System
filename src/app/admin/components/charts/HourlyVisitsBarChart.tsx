@@ -102,13 +102,6 @@ export function HourlyVisitsBarChart({ rows }: { rows: CountRow[] }) {
             fill={activeIndex === index ? "url(#hourBarGradientActive)" : "url(#hourBarGradient)"}
           />
         ))}
-        {bars.map((bar, index) =>
-          index % labelStep === 0 ? (
-            <text className="hour-chart-label" key={`${bar.label}-label`} x={bar.x + barWidth / 2} y={height - 10}>
-              {bar.label}
-            </text>
-          ) : null,
-        )}
         {bars.map((bar, index) => (
           <rect
             key={`${bar.label}-hit`}
@@ -125,6 +118,19 @@ export function HourlyVisitsBarChart({ rows }: { rows: CountRow[] }) {
           />
         ))}
       </svg>
+      <div className="chart-axis">
+        {bars.map((bar, index) =>
+          index % labelStep === 0 ? (
+            <span
+              key={`${bar.label}-axis`}
+              className="chart-axis-label"
+              style={{ left: `${((bar.x + barWidth / 2) / width) * 100}%` }}
+            >
+              {bar.label}
+            </span>
+          ) : null,
+        )}
+      </div>
       {active && (
         <div
           className="hour-chart-tooltip is-visible"

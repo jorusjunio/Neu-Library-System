@@ -11,7 +11,7 @@ export function MetricsGrid({ stats }: { stats: StatCard[] }) {
   return (
     <div className="stat-cards">
       {stats.map((stat) => (
-        <article className="stat-card" key={stat.label}>
+        <article className={`stat-card ${stat.tone}`} key={stat.label}>
           <div className={`stat-icon-wrap ${stat.tone}`}>
             <stat.icon size={21} strokeWidth={2.2} />
           </div>

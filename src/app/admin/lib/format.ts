@@ -1,4 +1,3 @@
-import { chartColors } from "../config";
 import type { CountRow, DateRangeFilter, VisitLog } from "../types";
 
 export function displayType(type: string) {
@@ -93,30 +92,4 @@ export function visitsByHour(rows: VisitLog[]) {
 
 export function maxCount(rows: CountRow[]) {
   return Math.max(1, ...rows.map((row) => row.count));
-}
-
-export function pieBackground(rows: CountRow[], gapDeg = 3) {
-  const total = rows.reduce((sum, row) => sum + row.count, 0);
-
-  if (!total) {
-    return "rgba(255,255,255,0.06)";
-  }
-
-  let cursor = 0;
-  const stops: string[] = [];
-
-  rows.forEach((row, index) => {
-    const size = (row.count / total) * 360;
-    const half = size > gapDeg ? gapDeg / 2 : 0;
-    const start = cursor + half;
-    const end = cursor + size - half;
-
-    stops.push(`transparent ${cursor}deg ${start}deg`);
-    stops.push(`${chartColors[index % chartColors.length]} ${start}deg ${end}deg`);
-    cursor += size;
-  });
-
-  stops.push(`transparent ${cursor}deg 360deg`);
-
-  return `conic-gradient(${stops.join(", ")})`;
 }
