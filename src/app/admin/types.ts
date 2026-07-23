@@ -51,22 +51,10 @@ export type CountRow = {
 };
 
 export type DashboardData = {
-  stats: {
-    totalVisits: number;
-    uniqueVisitors: number;
-    topPurpose: string;
-    topCollege: string;
-  };
   visitors: Visitor[];
   visitLogs: VisitLog[];
   purposes: Purpose[];
   admins: AdminUser[];
-  charts: {
-    visitsPerDay: CountRow[];
-    purposeBreakdown: CountRow[];
-    visitsByHour: CountRow[];
-    topColleges: CountRow[];
-  };
 };
 
 export type DropdownOption = {

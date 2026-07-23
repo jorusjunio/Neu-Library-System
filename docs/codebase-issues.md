@@ -5,7 +5,7 @@ This document summarizes the main issues found in the current codebase after rev
 
 ## Issues
 
-### Issue 1: Admin authorization is not role-validated
+### Issue 1: Admin authorization is not role-validated — ✅ Fixed
 The admin API routes only check whether a session exists, but they do not explicitly verify that the authenticated user has the ADMIN role.
 
 Affected files:
@@ -14,14 +14,20 @@ Affected files:
 - [src/app/api/admin/purposes/route.ts](src/app/api/admin/purposes/route.ts)
 - [src/app/api/admin/dashboard/route.ts](src/app/api/admin/dashboard/route.ts)
 
-### Issue 2: Auth role data is present but not enforced
+See [fixes/issue-1-admin-authorization.md](fixes/issue-1-admin-authorization.md) for details.
+
+### Issue 2: Auth role data is present but not enforced — ✅ Fixed
 The authentication configuration includes a role value in [src/lib/auth.ts](src/lib/auth.ts), but the admin routes are not using that role to enforce access control.
 
-### Issue 3: Dashboard endpoint may become slow with larger data
+Fixed as part of Issue 1 — see [fixes/issue-1-admin-authorization.md](fixes/issue-1-admin-authorization.md).
+
+### Issue 3: Dashboard endpoint may become slow with larger data — ✅ Fixed
 The dashboard API loads many records at once, including a large number of visit logs and visitors, which can become inefficient as the dataset grows.
 
 Affected file:
 - [src/app/api/admin/dashboard/route.ts](src/app/api/admin/dashboard/route.ts)
+
+See [fixes/issue-3-dashboard-scalability.md](fixes/issue-3-dashboard-scalability.md) for details.
 
 ### Issue 4: Error handling is somewhat brittle
 Some API routes rely on string-based error checks for flow control, which is harder to maintain and less robust than a typed approach.
