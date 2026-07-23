@@ -1,8 +1,10 @@
 "use client";
 
+import { BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { maxCount } from "../../lib/format";
 import type { CountRow } from "../../types";
+import { ChartEmptyState } from "./ChartEmptyState";
 
 function barPath(x: number, y: number, w: number, h: number, r: number) {
   if (h <= 0.01) return "";
@@ -24,7 +26,19 @@ function formatHourLabel(label: string) {
 }
 
 export function HourlyVisitsBarChart({ rows }: { rows: CountRow[] }) {
-  const chartRows = rows.length ? rows : [{ label: "No logs", count: 0 }];
+  if (rows.length === 0) {
+    return (
+      <div className="hour-chart-wrap">
+        <ChartEmptyState
+          icon={BarChart3}
+          title="No hourly activity yet"
+          subtitle="Peak visiting hours will show up here once logs come in."
+        />
+      </div>
+    );
+  }
+
+  const chartRows = rows;
   const max = maxCount(chartRows);
   const width = 1000;
   const height = 220;

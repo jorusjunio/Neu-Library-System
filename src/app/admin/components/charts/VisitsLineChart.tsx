@@ -1,8 +1,10 @@
 "use client";
 
+import { Activity } from "lucide-react";
 import { useState } from "react";
 import { maxCount } from "../../lib/format";
 import type { CountRow } from "../../types";
+import { ChartEmptyState } from "./ChartEmptyState";
 
 function smoothPath(points: Array<{ x: number; y: number }>) {
   if (points.length < 2) {
@@ -38,7 +40,19 @@ function formatTooltipLabel(label: string) {
 }
 
 export function VisitsLineChart({ rows }: { rows: CountRow[] }) {
-  const chartRows = rows.length ? rows : [{ label: "No logs", count: 0 }];
+  if (rows.length === 0) {
+    return (
+      <div className="line-chart-wrap">
+        <ChartEmptyState
+          icon={Activity}
+          title="No visits recorded yet"
+          subtitle="Daily visit trends will appear here once logs come in."
+        />
+      </div>
+    );
+  }
+
+  const chartRows = rows;
   const max = maxCount(chartRows);
   const width = 1000;
   const height = 260;

@@ -188,8 +188,8 @@ export default function AdminPage() {
   const overviewStats = {
     totalVisits: overviewLogs.length,
     uniqueVisitors: new Set(overviewLogs.map((log) => log.schoolId)).size,
-    topPurpose: overviewCharts.purposeBreakdown[0]?.label ?? "-",
-    topCollege: overviewCharts.topColleges[0]?.label ?? "-",
+    topPurpose: overviewCharts.purposeBreakdown[0]?.label ?? "No data yet",
+    topCollege: overviewCharts.topColleges[0]?.label ?? "No data yet",
   };
   const stats: StatCard[] = [
     {
