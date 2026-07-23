@@ -336,15 +336,17 @@ export default function AdminPage() {
             <h1 className="page-title">{activeTitle}</h1>
             <p className="page-sub">NEU Main Library - Real-time Statistics</p>
           </div>
-          <div className="topbar-right">
-            <FilterDropdown
-              compact
-              label="Date range"
-              options={dateRangeOptions}
-              value={filters.dateRange}
-              onChange={(value) => setDateRange(value as DateRangeFilter)}
-            />
-          </div>
+          {activeTab === "overview" && (
+            <div className="topbar-right">
+              <FilterDropdown
+                compact
+                label="Date range"
+                options={dateRangeOptions}
+                value={filters.dateRange}
+                onChange={(value) => setDateRange(value as DateRangeFilter)}
+              />
+            </div>
+          )}
         </header>
 
         {error && <p className="admin-login-error">{error}</p>}
