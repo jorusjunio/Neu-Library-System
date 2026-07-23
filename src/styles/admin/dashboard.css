@@ -507,6 +507,7 @@
 }
 
 .line-chart-wrap {
+  position: relative;
   width: 100%;
   height: 258px;
   margin-top: 0;
@@ -540,12 +541,19 @@
   animation: lineDraw 0.9s var(--ease) forwards;
 }
 
+.line-chart-crosshair {
+  stroke: rgba(74, 158, 255, 0.32);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  pointer-events: none;
+}
+
 .line-chart-point {
-  cursor: default;
+  pointer-events: none;
 }
 
 .line-chart-point-halo {
-  fill: rgba(74, 158, 255, 0.12);
+  fill: rgba(74, 158, 255, 0.14);
   opacity: 0;
   transition: opacity 0.18s ease;
 }
@@ -557,27 +565,13 @@
   transition: r 0.18s ease, stroke 0.18s ease;
 }
 
-.line-chart-point:hover .line-chart-point-halo {
+.line-chart-point.is-active .line-chart-point-halo {
   opacity: 1;
 }
 
-.line-chart-point:hover .line-chart-point-dot {
+.line-chart-point.is-active .line-chart-point-dot {
   r: 5;
   stroke: #4ade80;
-}
-
-.line-chart-point text {
-  fill: var(--text);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 800;
-  text-anchor: middle;
-  opacity: 0;
-  transition: opacity 0.18s ease;
-}
-
-.line-chart-point:hover text {
-  opacity: 1;
 }
 
 .line-chart-label {
@@ -585,6 +579,50 @@
   font-size: 10px;
   font-weight: 700;
   text-anchor: middle;
+}
+
+.line-chart-hit {
+  fill: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+.line-chart-tooltip {
+  position: absolute;
+  z-index: 5;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(9, 15, 30, 0.94);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.line-chart-tooltip.is-visible {
+  opacity: 1;
+}
+
+.line-chart-tooltip-label {
+  display: block;
+  color: var(--text-3);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.line-chart-tooltip-value {
+  display: block;
+  margin-top: 2px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 @keyframes lineDraw {
