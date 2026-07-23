@@ -28,7 +28,6 @@ export function FilterBar({
 
   return (
     <div className="stat-filter-bar">
-      <span className="stat-filter-label">Filter by:</span>
       <FilterDropdown clearable label="Purpose" options={purposeOptions} value={filters.purpose} onChange={onPurposeChange} />
       <FilterDropdown clearable label="College" options={collegeOptions} value={filters.college} onChange={onCollegeChange} />
       <FilterDropdown clearable label="Visitor" options={visitorTypeOptions} value={filters.visitorType} onChange={onVisitorTypeChange} />

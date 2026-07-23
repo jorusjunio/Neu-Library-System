@@ -21,7 +21,7 @@
   gap: 10px;
   padding: 10px 16px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--glass);
   backdrop-filter: blur(16px);
 }
@@ -63,14 +63,14 @@
   gap: 3px;
   padding: 3px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--glass-deep);
 }
 
 .filter-pill {
   padding: 5px 12px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   background: transparent;
   color: var(--text-2);
   font-size: 11px;
@@ -90,7 +90,7 @@
   margin-bottom: 14px;
   padding: 10px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--glass-deep);
   backdrop-filter: blur(16px);
   flex-wrap: wrap;
@@ -102,7 +102,7 @@
   min-width: 130px;
   padding: 0 10px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   outline: none;
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-2);
@@ -121,7 +121,7 @@
   gap: 7px;
   padding: 0 10px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   color: var(--text-2);
   font-size: 11px;
   font-weight: 700;
@@ -134,7 +134,7 @@
   gap: 6px;
   padding: 0 12px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--glass);
   color: var(--text-2);
   font-size: 11px;
@@ -152,7 +152,7 @@
   overflow: hidden;
   max-height: calc(100vh - 230px);
   border: 1px solid var(--border);
-  border-radius: 18px;
+  border-radius: var(--radius-xl);
   background: var(--glass-deep);
   backdrop-filter: blur(20px);
 }
@@ -255,7 +255,7 @@
   margin-right: 6px;
   place-items: center;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-2);
 }

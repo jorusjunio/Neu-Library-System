@@ -13,7 +13,7 @@
   top: 50vh;
   padding: 32px;
   border: 1px solid var(--border);
-  border-radius: 24px;
+  border-radius: var(--radius-2xl);
   background: rgba(6, 10, 22, 0.72);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(42px);
@@ -63,7 +63,7 @@
   min-height: 46px;
   padding: 0 14px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   outline: none;
   background: rgba(255, 255, 255, 0.045);
   color: var(--text);
@@ -93,7 +93,7 @@
   min-height: 46px;
   margin-top: 16px;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: rgba(74, 158, 255, 0.86);
   color: white;
   font-weight: 800;
@@ -122,7 +122,7 @@
   overflow: hidden;
   margin-top: 10px;
   border: 1px solid rgba(66, 133, 244, 0.5);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background:
     linear-gradient(#ffffff, #ffffff) padding-box,
     linear-gradient(90deg, #4285f4, #34a853, #fbbc05, #ea4335) border-box;
@@ -234,7 +234,7 @@
   gap: 8px;
   margin-top: 10px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-2);
   font-size: 12px;
@@ -270,7 +270,7 @@
   width: min(390px, 100%);
   padding: 28px;
   border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   background:
     linear-gradient(145deg, rgba(13, 22, 43, 0.96), rgba(5, 10, 22, 0.96)),
     rgba(6, 10, 22, 0.9);
@@ -301,7 +301,7 @@
   height: 32px;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-3);
   transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
@@ -319,7 +319,7 @@
   height: 52px;
   place-items: center;
   border: 1px solid rgba(240, 192, 64, 0.22);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--gold-g);
   color: var(--gold);
   animation: logoutIconPulse 2s ease-in-out infinite;
@@ -360,7 +360,7 @@
 .logout-cancel-btn,
 .logout-confirm-btn {
   min-height: 42px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-size: 12px;
   font-weight: 800;
   transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
